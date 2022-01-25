@@ -45,3 +45,16 @@ def pretty_print(table):
 
 print()
 pretty_print(table)
+
+def write_table(filename, table):
+    outfile = open(filename, "w")
+    for j in range(len(table)):
+        for i in range(len(table[j])-1):
+            outfile.write(str(table[j][i]))
+            outfile.write(",")
+        outfile.write(str(table[j][i+1]))
+        if(j != len(table)-1):
+            outfile.write("\n")
+    outfile.close()
+
+write_table("data_out.csv", table)
