@@ -7,8 +7,6 @@
 # functions: function(object)
 # methods: functions that belong to a specific object: <object>.<method>()
 
-from sympy import matrix_symbols
-
 
 fibs = [1, 1, 2, 3, 5, 8]
 print(fibs, type(fibs))
