@@ -2,6 +2,14 @@
 # often we want to open a CSV file (comma seperated values)
 # and load its contents into a table
 
+def convert_to_numeric(values):
+    for i in range(len(values)):
+        try:
+            numeric_value = float(values[i])
+            values[i] = numeric_value
+        except ValueError:
+            print("Could not convert", values[i], "to a number")
+
 def read_table(filename):
     table = []
     # 1. open the file
@@ -17,6 +25,7 @@ def read_table(filename):
         values = line.split(",")
         print(values)
         # TODO: Convert numeric values
+        convert_to_numeric(values)
         table.append(values)
     print(lines)
     # 3. close the file
