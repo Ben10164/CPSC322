@@ -1,5 +1,5 @@
 print("hello world from main() #1")
-import hello_world  # wont print anything since __name__ is "hello_world"
+import A_hello_world  # wont print anything since __name__ is "hello_world"
 
 
 print("__name__ in main.py", __name__)
