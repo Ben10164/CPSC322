@@ -1,4 +1,6 @@
 # THIS IS USED IN Matplotlib.ipynb
+import numpy as np
+
 
 def get_column(table, header, col_name):
     # col_index = header.index(col_name)
@@ -48,18 +50,50 @@ def dumby_function():
 
 
 def group_by(table, header, groupby_col_name):
-    groupby_col_index = header.index(groupby_col_name)  # will use this later
+    groupby_col_index = header.index(groupby_col_name)  # use this later
     groupby_col = get_column(table, header, groupby_col_name)
-    # a way to get the unique values by converting it to a set {sets have no duplicates}
-    # but then we need to convert it back to a list, then sort it
-    group_names = list(set(groupby_col)).sort()
-    group_subtables = [[] for _ in group_names]  # TODO: Fix
+    group_names = sorted(list(set(groupby_col)))  # e.g. [75, 76, 77]
+    group_subtables = [[] for _ in group_names]  # e.g. [[], [], []]
 
     for row in table:
         groupby_val = row[groupby_col_index]  # e.g. this row's modelyear
-        # now we figure out which row this belongs to
+        # which subtable does this row belong?
         groupby_val_subtable_index = group_names.index(groupby_val)
-        # this works because they are parallel
-        group_subtables[groupby_val_subtable_index].append(row)
+        group_subtables[groupby_val_subtable_index].append(
+            row.copy())  # make a copy
 
     return group_names, group_subtables
+
+
+# discretization lab
+# 1
+def compute_equal_width_cutoffs(values, num_bins):
+    # we need to figure out the width of a bin first
+    values_range = max(values) - min(values)
+    bin_width = values_range / num_bins
+    # now we have the width of the bins :) (also its a float)
+
+    # range() works well with integer start stops and steps
+    # np.arange() is for floating point start stop and steps
+    cutoffs = list(np.arange(min(values), max(values), bin_width))
+    cutoffs.append(max(values))  # exact max (because we do N + 1 cutoffs)
+    # if your aopplication allows, convert cutoffs to ints
+    # otherwise optionally round them to 2 decimal places
+    cutoffs = [round(cutoff, 2) for cutoff in cutoffs]
+    return cutoffs
+
+
+def compute_bin_frequencies(values, cutoffs):
+    freqs = [0 for _ in range(len(cutoffs) - 1)]
+
+    for value in values:
+        if value == max(values):
+            freqs[-1] += 1  # increment the last bins freqiuency
+        else:
+            # now we need to figure out where this is
+            # need to stop one early since we are indexing with i + 1
+            for i in range(len(cutoffs) - 1):
+                if cutoffs[i] <= value < cutoffs[i + 1]:  # left side closed, right side open
+                    # we found it!
+                    freqs[i] += 1
+    return freqs
