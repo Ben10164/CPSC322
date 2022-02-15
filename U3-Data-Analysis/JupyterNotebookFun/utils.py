@@ -97,3 +97,36 @@ def compute_bin_frequencies(values, cutoffs):
                     # we found it!
                     freqs[i] += 1
     return freqs
+
+
+def compute_slope_intercept(x, y):
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
+    m = 0
+    numer = 0
+    denom = 0
+
+    for i in range(len(x)):
+        x_i = x[i]
+        y_i = y[i]
+        x_mean_diff = x_i - x_mean
+        y_mean_diff = y_i - y_mean
+        numer += x_mean_diff * y_mean_diff
+
+    for x_i in x:
+        x_mean_diff = x_i - x_mean
+        denom += x_mean_diff ** 2
+
+    m = numer / denom
+    b = y_mean - m * x_mean
+    return m, b
+
+
+def compute_slope(x, y):
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
+    numer = sum([(x[i] - x_mean) * (y[i] - y_mean) for i in range(len(x))])
+    denom = sum([(x_i - x_mean) ** 2 for x_i in x])
+
+    m = numer / denom
+    return m
