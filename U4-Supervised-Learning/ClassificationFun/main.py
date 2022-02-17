@@ -1,4 +1,9 @@
+from mysimplelinearregressor import MySimpleLinearRegressor
+import numpy as np
+
+
 def main():
+
     # staritng with PA4 and beyond
     # we ware going to implement ML algorithms
     # following the API design of commmon data science
@@ -30,10 +35,20 @@ def main():
     # regression: mean absolute error (average
     # of the absolute differences between pairs
     # in y_predicted and y_test)
-    # classification: accuracy (number of matches 
+    # classification: accuracy (number of matches
     # in y_predicted and y_test divided by total)
-    #
-    pass
+
+    np.random.seed(0)
+    X_train = [[val] for val in range(100)]  # 2D
+    y_train = [row[0] * 2 + np.random.normal(0, 25) for row in X_train]  # 1D
+    # WHEN YOU SEE CAPITAL X, IT MUST BE IN A MATRIX (2D)
+    X_test = [[150], [1000]]
+    # now we make the MySimpleLienarRegressor object
+    lin_reg = MySimpleLinearRegressor()
+    lin_reg.fit(X_train, y_train)
+    y_predict = lin_reg.predict(X_test)
+    print(y_predict)
+    # now, lets conver thtis example into unit tests
 
 
 if __name__ == '__main__':
