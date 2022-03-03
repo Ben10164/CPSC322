@@ -48,7 +48,31 @@ print('p(att1 = 1 | result = yes) = {}'.format(result))
 # p(result=yes) = 5/8
 # = 1/5
 
+# p(result=no|X) = p(X|result=no)*P*result=no) = p(att1=1|result=no)p(att2=5|result=no)p(result=no)
+# p(att1=1|result=no) = 2/3
+# p(att2=5|result=no) = 2/3
+# p(result=no) = 3/8
+# = 1/6
+
+# since we have p(result=yes) = 1/5 and p(result=no) = 1/6
+# and 1/5 > 1/6, we can predict that the result is yes
+
+
 # 4. p(result=yes|X)
-# = p(att1=1 and att2 = 5 and result=yes) * p(result=yes)/p(result=yes)
+# = (p(att1=1 and att2 = 5 and result=yes) * p(result=yes))/p(result=yes)
 # = p(att1=1 and att2 = 5 and result=yes)
 # = 2/8 = 1/4
+
+# p(result=no|X)
+# = (p(att1=1 and att2 = 5 and result=no) * p(result=no))/p(result=no)
+# there are 2 that are 1 5 no, out of the 8, so that means that:
+# p(att1=1 and att2 = 5 and result=no) = 2/8
+# and the p(result=no)s cancel out, so:
+# p(result=no|X) = 1/4
+
+# since we have p(result=yes|X) = p(result=no|X) = 1/4,
+# we chose the class label with the larger prior, which is:
+# p(result=yes) = 5/8
+# therefore the result is yes!
+
+# ON TIE, WE PICK THE CLASS WITH THE LARGER PRIOR
