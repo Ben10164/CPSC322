@@ -1,4 +1,5 @@
 import numpy as np
+import utils
 # this is some PA7 starter code
 
 header = ["level", "lang", "tweets", "phd"]
@@ -37,7 +38,7 @@ y_train = ["False", "False", "True", "True", "True", "False",
 #                                     ["Attribute","PHD",
 #                                         ["Value","yes",
 #                                             ["Leaf","False",2,5] # we put in the proportion values (not needed, but nice for debugging)
-#                                         ]
+#                                         ],
 #                                         ["Value","no",
 #                                             ["Leaf","True",3,5]
 #                                         ]
@@ -58,39 +59,37 @@ y_train = ["False", "False", "True", "True", "True", "False",
 #                                 ]
 #                             ]
 interview_tree_solution = ["Attribute", "level",
-                           ["Value", "Junior",
-                            ["Attribute", "PHD",
-                             ["Value", "yes",
-                              # we put in the proportion values (not needed, but nice for debugging)
-                              ["Leaf", "False", 2, 5]
-                              ],
-                                ["Value", "no",
-                                 ["Leaf", "True", 3, 5]
-                                 ]
-                             ]
-                            ],
-                           ["Value", "Mid",
-                               # 4 of the 14 people are level MID
-                               ["Leaf", "True", 4, 14]
-                            ],
-                           ["Value", "Senior",
-                               ["Attribute", "Tweets",
-                                ["Value", "yes",
-                                 ["Leaf", "True", 2, 5]
-                                 ],
-                                   ["Value", "no",
-                                    ["Leaf", "False", 3, 5]
+                                ["Value","Junior",
+                                    ["Attribute","PHD",
+                                        ["Value","yes",
+                                            ["Leaf","False",2,5]
+                                        ],
+                                        ["Value","no",
+                                            ["Leaf","True",3,5]
+                                        ]
+                                    ]
+                                ],
+                                ["Value","Mid",
+                                    ["Leaf","True",4,14]
+                                ],
+                                ["Value","Senior",
+                                    ["Attribute","Tweets",
+                                        ["Value","yes",
+                                            ["Leaf","True",2,5]
+                                        ],
+                                        ["Value","no",
+                                            ["Leaf","False",3,5]
+                                        ]
                                     ]
                                 ]
                             ]
-                           ]
 
 # the order of the attribute values in the domain does matter
 # also do them alphabetically
 attribute_domains = {0: ["Junior", "Mid", "Senior"],
                      1: ["Java", "Python", "R"],  # lang
                      2: ["no", "yes"],  # tweets
-                     2: ["no", "yes"]}  # PHD
+                     3: ["no", "yes"]}  # PHD
 
 
 def tdidt(current_instances, available_attributes):
@@ -105,12 +104,42 @@ def tdidt(current_instances, available_attributes):
     # group data by attribute domains (creates pairwise disjoint partitions)
     #   this is a grouopby where you use the attribute domain, instead of the values
     partitions = partition_instances(current_instances, attribute)
+    # print(partitions)
+
     # for each partition, repeat unless one of the following occurs (base case)
-    #    CASE 1: all class labels of the partition are the same => make a leaf node
-    #    CASE 2: no more attributes to select (clash) => handle clash w/majority vote leaf node
-    #    CASE 3: no more instances to partition (empty partition) => backtrack and replace attribute node with majority vote leaf node
-    print(available_attributes)
-    return None
+    for att_value, att_partition in partitions.items():  # dictionary
+        print("Current att_value", att_value)
+        print("Length of partition", len(att_partition))
+        value_subtree = ["Value", att_value]
+
+        # CASE 1: all class labels of the partition are the same => make a leaf node
+        if len(att_partition) > 0 and all_same_class(att_partition):
+            print("CASE 1 all same class")
+            # make leaf node
+
+        # CASE 2: no more attributes to select (clash) => handle clash w/majority vote leaf node
+        elif len(att_partition) > 0 and len(available_attributes) == 0:
+            print("CASE 2 no more attributes")
+            # handle clash with the majority vote leaf node
+
+        # CASE 3: no more instances to partition (empty partition) => backtrack and replace attribute node with majority vote leaf node
+        elif len(att_partition) == 0:
+            print("CASE 3 empty partition")
+            # backtrack and replace this attribute node with a majority vote leaf node
+        else:
+            # none of the previous conditions were true...
+            # recurse :)
+            # need a .copy here because we cant split on the same attribute twice
+            print("Woah recursion")
+            subtree = tdidt(att_partition, available_attributes.copy())
+            # now that we have this subtree:
+            # append subtree to value_subtree, and then tree appropriatly
+    return tree
+
+
+def all_same_class(att_partition):
+    # look through all the [-1] and if they all are the same return true
+    pass
 
 
 def fit_starter_code():  # builds the tree
@@ -124,7 +153,7 @@ def fit_starter_code():  # builds the tree
     available_attributes = header.copy()
     # recall: python is pass by object reference
     tree = tdidt(train, available_attributes)
-    print("tree", tree)
+    # print("tree", tree)
     # note: the unit test for fit, will assert that the tree return == interview_tree_solution
     #   (mind the attribute value order)
 
@@ -138,14 +167,34 @@ def select_attribute(current_instances, available_attrbutes):
 
     # for now we will use random attribute selection
     rand_index = np.random.randint(0, len(available_attrbutes))
-    print("The random index chosen is", rand_index)
+
+    # * for each available attribute:
+    #     * for each value in the attribute's domain (Seinor, Junior, etc...)
+    #         * calculate the entropy of that value's partition (E_Seinor, E_Junior, etc...)
+    #     * computer E_new, which is the weighted sum of the partition entropies
+    # * chose to split on the attribute with the smallest E_new
+
+    # print("The random index chosen is", rand_index)
     return available_attrbutes[rand_index]
 
 
-def partition_instances(current_instances, attribute):
+# split_attribute is like the groupby attribute
+def partition_instances(current_instances, split_attribute):
     # group by attribute domain
     #   use the attrobite_domains thing
-    pass
+    # key (attribute value)[junior, mid, seinor]: value (subtable) [values for junior, values for mid, values for senior]
+    partitions = {}
+    att_index = header.index(split_attribute)  # e.g. 0
+    att_domain = attribute_domains[att_index]  # e.g. ["Junior","Senior","Mid"]
+    for att_value in att_domain:
+        # make an empty list at the key of att_value (Junior,Seinor, etc...)
+        partitions[att_value] = []
+        for instance in current_instances:
+            if instance[att_index] == att_value:
+                partitions[att_value].append(instance)
+
+    # return a dictionary
+    return partitions
 
 
 fit_starter_code()
