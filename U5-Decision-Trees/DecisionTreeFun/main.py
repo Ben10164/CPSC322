@@ -139,7 +139,14 @@ def tdidt(current_instances, available_attributes):
 
 def all_same_class(att_partition):
     # look through all the [-1] and if they all are the same return true
-    pass
+    for i in range(len(att_partition)):
+        try:
+            if att_partition[i][-1] == att_partition[i+1][-1]:
+                continue
+            else:
+                return False
+        except IndexError:
+            return True
 
 
 def fit_starter_code():  # builds the tree
