@@ -1,5 +1,23 @@
 graph g {
     level [shape=box];
-    phd [shape=box];
-    level -- phd [label="Junior"];
+
+    // Junior 
+    PhD [shape=box];
+    level -- PhD [label="Junior"];
+    False1 [label="False"];
+    True1 [label="True"];
+    PhD -- False1 [label="Yes"];
+    PhD --  True1 [label="No"];
+
+    // Mid
+    True2 [label="True"];
+    level -- True2 [label="Mid"];
+
+    // Senior
+    Tweets [shape=box];
+    level -- Tweets [label="Senior"];
+    True3 [label="True"];
+    False3 [label="False"];
+    Tweets -- False3 [label="No"];
+    Tweets -- True3 [label="Yes"];
 }

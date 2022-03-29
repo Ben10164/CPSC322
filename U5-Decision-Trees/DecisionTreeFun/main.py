@@ -205,3 +205,13 @@ def partition_instances(current_instances, split_attribute):
 
 
 fit_starter_code()
+
+
+# tree pruning
+# decision trees are notorious for overfitting to the training set
+# this might seem like a good thing, but this means that the tree is overfitted to the training set,
+#   and therefore the tree will respond well to unseen instances 
+# typically to combat this, you post-prune the tree using
+# prunning set
+# no pruning coding on PA7 btw
+#  
