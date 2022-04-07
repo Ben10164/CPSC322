@@ -5,7 +5,7 @@ import json  # a lib for parsing strings and json objects
 
 url = 'https://interview-flask-app.herokuapp.com/predict?'
 # add out query terms
-url += "level=Junior&lang=Jave&tweets=yes&phd=no"
+url += "level=Junior&lang=Java&tweets=yes&phd=no"
 
 # make the get request
 response = requests.get(url)
