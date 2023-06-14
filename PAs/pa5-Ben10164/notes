@@ -1,0 +1,3 @@
+use the in class groupby
+you groupby the indexes with the class identifier (the mpg)
+then you use the dealer method to distribute the data/groupby'd indexes
